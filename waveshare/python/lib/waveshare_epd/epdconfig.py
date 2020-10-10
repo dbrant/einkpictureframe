@@ -133,9 +133,7 @@ class JetsonNano:
 
     def module_exit(self):
         logging.debug("spi end")
-        # This line removed to enable sleep and waking
-        # self.SPI.SYSFS_software_spi_end()
-        
+        self.SPI.SYSFS_software_spi_end()
 
         logging.debug("close 5V, Module enters 0 power consumption ...")
         self.GPIO.output(self.RST_PIN, 0)
