@@ -148,7 +148,7 @@ class EPD:
         epdconfig.delay_ms(100)
         self.ReadBusy()
 
-    def clear(self):
+    def Clear(self):
         buf = [0x00] * (int(self.width/8) * self.height)
         self.send_command(0x10)
         self.send_data2(buf)
@@ -165,7 +165,7 @@ class EPD:
         self.send_command(0x07) # DEEP_SLEEP
         self.send_data(0XA5)
         
-    def dev_exit(self):
+    def Dev_exit(self):
         epdconfig.module_exit()
 ### END OF FILE ###
 

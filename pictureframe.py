@@ -21,7 +21,7 @@ try:
 
     #millis = int(round(time.time() * 1000))
     #logging.info("Clearing...")
-    #epd.clear()
+    #epd.Clear()
     #logging.info("That took " + str(int(round(time.time() * 1000)) - millis) + " ms")
 
     millis = int(round(time.time() * 1000))
@@ -33,7 +33,7 @@ try:
 
     logging.info("Going to sleep...")
     epd.sleep()
-    epd.dev_exit()
+    epd.Dev_exit()
 
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
