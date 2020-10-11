@@ -124,6 +124,7 @@ class EPD:
 
     def getbuffer(self, image):
         img = image
+        imwidth, imheight = img.size
         if(imwidth == self.width and imheight == self.height):
             img = img.convert('1')
         elif(imwidth == self.height and imheight == self.width):
