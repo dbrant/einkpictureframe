@@ -197,6 +197,16 @@ class EPD:
         epdconfig.delay_ms(100)
         self.ReadBusy()
 
+    def clear_new(self):
+        buf = [0x00] * (int(self.width/8) * self.height)
+        self.send_command(0x10)
+        self.send_data2(buf)
+        self.send_command(0x13)
+        self.send_data2(buf)
+        self.send_command(0x12)
+        epdconfig.delay_ms(100)
+        self.ReadBusy()
+
     def sleep(self):
         self.send_command(0x02) # POWER_OFF
         self.ReadBusy()
