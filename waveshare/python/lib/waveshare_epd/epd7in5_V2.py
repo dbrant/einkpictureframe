@@ -7,6 +7,10 @@
 # * | This version:   V4.0
 # * | Date        :   2019-06-20
 # # | Info        :   python demo
+#
+# Modifications by Dmitry Brant:
+# - Oct 2020: New routines for faster SPI data transfer.
+#
 # -----------------------------------------------------------------------------
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documnetation files (the "Software"), to deal
@@ -151,14 +155,14 @@ class EPD:
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
-                    if pixels[x, y] == 0:
+                    if pixels[x, y] != 0:
                         buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
                     newy = self.height - x - 1
-                    if pixels[x, y] == 0:
+                    if pixels[x, y] != 0:
                         buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
         else:
             logging.warning("Wrong image dimensions: must be " + str(self.width) + "x" + str(self.height))
