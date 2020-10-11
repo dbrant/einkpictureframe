@@ -64,7 +64,13 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 0)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
-        
+
+    def send_data2(self, data):
+        epdconfig.digital_write(self.dc_pin, 1)
+        epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.SPI.writebytes2(data)
+        epdconfig.digital_write(self.cs_pin, 1)
+
     def ReadBusy(self):
         logging.debug("e-Paper busy")
         self.send_command(0x71)
@@ -170,11 +176,11 @@ class EPD:
         self.send_command(0x13)
         #epdconfig.digital_write(self.dc_pin, GPIO.HIGH)
 
-        epdconfig.SPI.writebytes2(data)
+        self.send_data2(data)
 
         self.send_command(0x12)
         epdconfig.delay_ms(100)
-        self.wait_until_idle()
+        self.ReadBusy()
 
     def Clear(self):
         self.send_command(0x10)
