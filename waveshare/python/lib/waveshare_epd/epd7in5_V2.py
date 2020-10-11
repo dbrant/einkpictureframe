@@ -123,31 +123,7 @@ class EPD:
         return 0
 
     def getbuffer(self, image):
-        # logging.debug("bufsiz = ",int(self.width/8) * self.height)
-        buf = [0xFF] * (int(self.width/8) * self.height)
-        image_monocolor = image.convert('1')
-        imwidth, imheight = image_monocolor.size
-        pixels = image_monocolor.load()
-        # logging.debug("imwidth = %d, imheight = %d",imwidth,imheight)
-        if(imwidth == self.width and imheight == self.height):
-            logging.debug("Vertical")
-            for y in range(imheight):
-                for x in range(imwidth):
-                    # Set the bits for the column of pixels at the current position.
-                    if pixels[x, y] == 0:
-                        buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
-        elif(imwidth == self.height and imheight == self.width):
-            logging.debug("Horizontal")
-            for y in range(imheight):
-                for x in range(imwidth):
-                    newx = y
-                    newy = self.height - x - 1
-                    if pixels[x, y] == 0:
-                        buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
-        return buf
-
-    def getbuffer_new(self, image):
-        buf = [0xFF] * (int(self.width/8) * self.height)
+        buf = [0x00] * (int(self.width/8) * self.height)
         image_monocolor = image.convert('1')
         imwidth, imheight = image_monocolor.size
         pixels = image_monocolor.load()
@@ -156,48 +132,26 @@ class EPD:
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] != 0:
-                        buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
+                        buf[int((x + y * self.width) / 8)] &= (0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
                     newy = self.height - x - 1
                     if pixels[x, y] != 0:
-                        buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
+                        buf[int((newx + newy*self.width) / 8)] &= (0x80 >> (y % 8))
         else:
             logging.warning("Wrong image dimensions: must be " + str(self.width) + "x" + str(self.height))
         return buf
 
     def display(self, image):
         self.send_command(0x13)
-        for i in range(0, int(self.width * self.height / 8)):
-            self.send_data(~image[i]);
-                
+        self.send_data2(image)
         self.send_command(0x12)
         epdconfig.delay_ms(100)
         self.ReadBusy()
 
-    def display_new(self, data):
-        self.send_command(0x13)
-        self.send_data2(data)
-        self.send_command(0x12)
-        epdconfig.delay_ms(100)
-        self.ReadBusy()
-
-    def Clear(self):
-        self.send_command(0x10)
-        for i in range(0, int(self.width * self.height / 8)):
-            self.send_data(0x00)
-            
-        self.send_command(0x13)
-        for i in range(0, int(self.width * self.height / 8)):
-            self.send_data(0x00)
-                
-        self.send_command(0x12)
-        epdconfig.delay_ms(100)
-        self.ReadBusy()
-
-    def clear_new(self):
+    def clear(self):
         buf = [0x00] * (int(self.width/8) * self.height)
         self.send_command(0x10)
         self.send_data2(buf)
@@ -214,7 +168,7 @@ class EPD:
         self.send_command(0x07) # DEEP_SLEEP
         self.send_data(0XA5)
         
-    def Dev_exit(self):
+    def dev_exit(self):
         epdconfig.module_exit()
 ### END OF FILE ###
 
