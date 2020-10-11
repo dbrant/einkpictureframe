@@ -130,16 +130,16 @@ class EPD:
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
-                    if pixels[x, y] == 0:
-                        buf[int((x + y * self.width) / 8)] &= (0x80 >> (x % 8))
+                    if pixels[x, y] != 0:
+                        buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
             logging.debug("Horizontal")
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
                     newy = self.height - x - 1
-                    if pixels[x, y] == 0:
-                        buf[int((newx + newy*self.width) / 8)] &= (0x80 >> (y % 8))
+                    if pixels[x, y] != 0:
+                        buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
         return buf
         
     def display(self, image):
