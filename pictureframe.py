@@ -20,9 +20,12 @@ try:
     epd.init()
     #epd.Clear()
 
+    millis = int(round(time.time() * 1000))
     logging.info("Loading image...")
-    Himage = Image.open(os.path.join(imagepath, 'db1.bmp'))
-    epd.display(epd.getbuffer(Himage))
+    img = Image.open(os.path.join(imagepath, 'db1.jpg'))
+    img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
+    epd.display_new(epd.getbuffer_new(img))
+    logging.info("That took " + str(int(round(time.time() * 1000)) - millis) + " ms")
 
     logging.info("Going to sleep...")
     epd.sleep()
