@@ -123,25 +123,20 @@ class EPD:
         return 0
 
     def getbuffer(self, image):
-        buf = [0x00] * (int(self.width/8) * self.height)
-        image_monocolor = image.convert('1')
-        imwidth, imheight = image_monocolor.size
-        pixels = image_monocolor.load()
+        img = image
         if(imwidth == self.width and imheight == self.height):
-            for y in range(imheight):
-                for x in range(imwidth):
-                    # Set the bits for the column of pixels at the current position.
-                    if pixels[x, y] == 0:
-                        buf[int((x + y * self.width) / 8)] |= (0x80 >> (x % 8))
+            img = img.convert('1')
         elif(imwidth == self.height and imheight == self.width):
-            for y in range(imheight):
-                for x in range(imwidth):
-                    newx = y
-                    newy = self.height - x - 1
-                    if pixels[x, y] == 0:
-                        buf[int((newx + newy*self.width) / 8)] |= (0x80 >> (y % 8))
+            img = img.rotate(90).convert('1')
         else:
             logging.warning("Wrong image dimensions: must be " + str(self.width) + "x" + str(self.height))
+            return bytearray()
+
+        buf = bytearray(img.tobytes('raw'))
+        # The bytes need to be inverted, because in the PIL world 0=black and 1=white, but
+        # in the e-paper world 0=white and 1=black.
+        for i in range(len(buf)):
+            buf[i] ^= 0xFF
         return buf
 
     def display(self, image):
