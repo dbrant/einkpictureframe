@@ -64,7 +64,13 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 0)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
-        
+
+    def send_data2(self, data):
+        epdconfig.digital_write(self.dc_pin, 1)
+        epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.SPI.writebytes2(data)
+        epdconfig.digital_write(self.cs_pin, 1)
+
     def ReadBusy(self):
         logging.debug("e-Paper busy")
         self.send_command(0x71)
@@ -125,7 +131,7 @@ class EPD:
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] == 0:
-                        buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
+                        buf[int((x + y * self.width) / 8)] &= (0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
             logging.debug("Horizontal")
             for y in range(imheight):
@@ -133,7 +139,7 @@ class EPD:
                     newx = y
                     newy = self.height - x - 1
                     if pixels[x, y] == 0:
-                        buf[int((newx + newy*self.width) / 8)] &= ~(0x80 >> (y % 8))
+                        buf[int((newx + newy*self.width) / 8)] &= (0x80 >> (y % 8))
         return buf
         
     def display(self, image):
@@ -144,7 +150,14 @@ class EPD:
         self.send_command(0x12)
         epdconfig.delay_ms(100)
         self.ReadBusy()
-        
+
+    def display_fast(self, data):
+        self.send_command(0x13)
+        self.send_data2(data)
+        self.send_command(0x12)
+        epdconfig.delay_ms(100)
+        self.ReadBusy()
+
     def Clear(self):
         self.send_command(0x10)
         for i in range(0, int(self.width * self.height / 8)):

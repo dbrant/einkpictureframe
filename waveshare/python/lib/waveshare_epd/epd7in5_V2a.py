@@ -174,10 +174,7 @@ class EPD:
 
     def display(self, data):
         self.send_command(0x13)
-        #epdconfig.digital_write(self.dc_pin, GPIO.HIGH)
-
         self.send_data2(data)
-
         self.send_command(0x12)
         epdconfig.delay_ms(100)
         self.ReadBusy()
