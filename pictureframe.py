@@ -34,10 +34,7 @@ try:
     logging.info("Going to sleep...")
     epd.sleep()
     epd.dev_exit()
-    
-except IOError as e:
-    logging.info(e)
-    
+
 except KeyboardInterrupt:    
     logging.info("ctrl + c:")
     epd7in5_V2.epdconfig.module_exit()
