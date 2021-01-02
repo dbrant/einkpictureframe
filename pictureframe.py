@@ -24,7 +24,11 @@ totalWidth = 800
 totalHeight = 480
 clockWidth = 320
 clockHeight = 150
+clockTextFormat = "%H:%M"
+curClockText = ""
 phase = 0
+
+
 
 try:
     logging.info("Initializing...")
@@ -36,16 +40,23 @@ try:
     #logging.info("That took " + str(int(round(time.time() * 1000)) - millis) + " ms")
 
     while True:
-        logging.info("Loading next image...")
 
-        imageName = random.choice(imageList)
+        time.sleep(5)
 
         now = datetime.datetime.now()
-        img = Image.open(os.path.join(imagepath, imageName))
+        clockText = now.strftime(clockTextFormat)
+        if clockText == curClockText:
+            continue
+
+        curClockText = clockText
+
+        logging.info("Loading next image...")
+
+        img = Image.open(os.path.join(imagepath, random.choice(imageList)))
 
         draw = ImageDraw.Draw(img)
         clockFont = ImageFont.truetype('agenda.ttf', 128)
-        clockText = now.strftime("%H:%M")
+
 
         if phase == 0:
             draw.rectangle((0, 0, clockWidth, clockHeight), fill = 'white')
@@ -65,8 +76,6 @@ try:
         epd.display(epd.getbuffer(img))
 
         epd.sleep()
-
-        time.sleep(60)
 
         phase = phase + 1
         if phase > 3:
