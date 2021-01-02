@@ -28,19 +28,8 @@ clockTextFormat = "%H:%M"
 curClockText = ""
 phase = 0
 
-
-
 try:
-    logging.info("Initializing...")
-    epd.init()
-
-    #millis = int(round(time.time() * 1000))
-    #logging.info("Clearing...")
-    #epd.Clear()
-    #logging.info("That took " + str(int(round(time.time() * 1000)) - millis) + " ms")
-
     while True:
-
         time.sleep(5)
 
         now = datetime.datetime.now()
@@ -73,8 +62,8 @@ try:
 
         img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
 
+        epd.init()
         epd.display(epd.getbuffer(img))
-
         epd.sleep()
 
         phase = phase + 1
