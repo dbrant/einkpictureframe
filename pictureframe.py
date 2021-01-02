@@ -62,9 +62,6 @@ try:
 
         img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
 
-        img.save("foo.png", "PNG")
-
-        img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
         epd.display(epd.getbuffer(img))
 
         epd.sleep()
