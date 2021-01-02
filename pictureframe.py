@@ -44,7 +44,7 @@ try:
         img = Image.open(os.path.join(imagepath, random.choice(imageList)))
 
         draw = ImageDraw.Draw(img)
-        clockFont = ImageFont.truetype('agenda.ttf', 128)
+        clockFont = ImageFont.truetype(os.path.join(imagepath, 'agenda.ttf'), 128)
 
 
         if phase == 0:
