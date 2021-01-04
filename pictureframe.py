@@ -4,22 +4,23 @@ import sys
 import os
 from os import listdir
 from os.path import isfile, join
-imagepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
-libpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'waveshare/python/lib')
-if os.path.exists(libpath):
-    sys.path.append(libpath)
-
 import logging
 import datetime
 import random
-from waveshare_epd import epd7in5_V2
+import subprocess
 import time
 from PIL import Image,ImageDraw,ImageFont
 
 logging.basicConfig(level=logging.DEBUG)
 
+selfPath = os.path.dirname(os.path.realpath(__file__))
+imagepath = os.path.join(selfPath, 'images')
+
 imageList = [f for f in listdir(imagepath) if isfile(join(imagepath, f))]
 
+clockFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 128)
+
+tmpImageName = "/tmp/pictureframe.png"
 totalWidth = 800
 totalHeight = 480
 clockWidth = 320
@@ -39,13 +40,10 @@ try:
 
         curClockText = clockText
 
-        logging.info("Loading next image...")
+        logging.info("Creating next image...")
 
         img = Image.open(os.path.join(imagepath, random.choice(imageList)))
-
         draw = ImageDraw.Draw(img)
-        clockFont = ImageFont.truetype(os.path.join(imagepath, 'agenda.ttf'), 128)
-
 
         if phase == 0:
             draw.rectangle((0, 0, clockWidth, clockHeight), fill = 'white')
@@ -60,13 +58,8 @@ try:
             draw.rectangle((totalWidth - clockWidth, totalHeight - clockHeight, totalWidth, totalHeight), fill = 'white')
             draw.text((totalWidth - clockWidth + 24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0)
 
-        img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
-
-        epd = epd7in5_V2.EPD()
-        epd.init()
-        epd.display(epd.getbuffer(img))
-        epd.sleep()
-        epd.Dev_exit()
+        #img.save(tmpImageName, "PNG")
+        subprocess.call([os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
 
         phase = phase + 1
         if phase > 3:
