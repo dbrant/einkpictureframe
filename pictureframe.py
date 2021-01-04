@@ -2,6 +2,8 @@
 # -*- coding:utf-8 -*-
 import sys
 import os
+from os import listdir
+from os.path import isfile, join
 imagepath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'images')
 libpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'waveshare/python/lib')
 if os.path.exists(libpath):
@@ -16,9 +18,7 @@ from PIL import Image,ImageDraw,ImageFont
 
 logging.basicConfig(level=logging.DEBUG)
 
-epd = epd7in5_V2.EPD()
-
-imageList = [ 'db1.jpg', 'bissel3.jpg', 'db2.jpg', 'bissel2.jpg' ]
+imageList = [f for f in listdir(imagepath) if isfile(join(imagepath, f))]
 
 totalWidth = 800
 totalHeight = 480
@@ -62,16 +62,16 @@ try:
 
         img = img.convert(mode='1',dither=Image.FLOYDSTEINBERG)
 
+        epd = epd7in5_V2.EPD()
         epd.init()
         epd.display(epd.getbuffer(img))
         epd.sleep()
+        epd.Dev_exit()
 
         phase = phase + 1
         if phase > 3:
             phase = 0
 
 except KeyboardInterrupt:    
-    logging.info("ctrl + c:")
-    epd.Dev_exit()
-    epd7in5_V2.epdconfig.module_exit()
+    logging.info("ctrl-c")
     exit()
