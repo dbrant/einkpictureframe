@@ -58,8 +58,8 @@ try:
             draw.rectangle((totalWidth - clockWidth, totalHeight - clockHeight, totalWidth, totalHeight), fill = 'white')
             draw.text((totalWidth - clockWidth + 24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0)
 
-        #img.save(tmpImageName, "PNG")
-        subprocess.call([os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
+        img.save(tmpImageName, "PNG")
+        subprocess.call(['python', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
 
         phase = phase + 1
         if phase > 3:
