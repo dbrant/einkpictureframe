@@ -29,6 +29,9 @@ clockTextFormat = "%H:%M"
 curClockText = ""
 phase = 0
 
+strokeWidth = 4
+strokeColor = (255, 255, 255)
+
 try:
     while True:
         time.sleep(5)
@@ -46,17 +49,17 @@ try:
         draw = ImageDraw.Draw(img)
 
         if phase == 0:
-            draw.rectangle((0, 0, clockWidth, clockHeight), fill = 'white')
-            draw.text((24, 0), clockText, font = clockFont, fill = 0)
+            #draw.rectangle((0, 0, clockWidth, clockHeight), fill = 'white')
+            draw.text((24, 0), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
         elif phase == 1:
-            draw.rectangle((totalWidth - clockWidth, 0, totalWidth, clockHeight), fill = 'white')
-            draw.text((totalWidth - clockWidth + 24, 0), clockText, font = clockFont, fill = 0)
+            #draw.rectangle((totalWidth - clockWidth, 0, totalWidth, clockHeight), fill = 'white')
+            draw.text((totalWidth - clockWidth + 24, 0), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
         elif phase == 2:
-            draw.rectangle((0, totalHeight - clockHeight, clockWidth, totalHeight), fill = 'white')
-            draw.text((24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0)
+            #draw.rectangle((0, totalHeight - clockHeight, clockWidth, totalHeight), fill = 'white')
+            draw.text((24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
         elif phase == 3:
-            draw.rectangle((totalWidth - clockWidth, totalHeight - clockHeight, totalWidth, totalHeight), fill = 'white')
-            draw.text((totalWidth - clockWidth + 24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0)
+            #draw.rectangle((totalWidth - clockWidth, totalHeight - clockHeight, totalWidth, totalHeight), fill = 'white')
+            draw.text((totalWidth - clockWidth + 24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
 
         img.save(tmpImageName, "PNG")
         subprocess.call(['python', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
