@@ -11,6 +11,11 @@ import subprocess
 import time
 from PIL import Image,ImageDraw,ImageFont
 
+# Before running, make sure Pillow is up to date:
+# python3 -m pip install --upgrade Pillow
+# ...or if running as root (i.e. on startup)
+# sudo python3 -m pip install --upgrade Pillow
+
 logging.basicConfig(level=logging.DEBUG)
 
 selfPath = os.path.dirname(os.path.realpath(__file__))
