@@ -34,7 +34,7 @@ clockTextFormat = "%H:%M"
 curClockText = ""
 phase = 0
 
-strokeWidth = 4
+strokeWidth = 10
 strokeColor = (255, 255, 255)
 
 try:
