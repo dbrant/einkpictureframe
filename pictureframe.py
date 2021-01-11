@@ -18,7 +18,7 @@ imagepath = os.path.join(selfPath, 'images')
 
 imageList = [f for f in listdir(imagepath) if isfile(join(imagepath, f))]
 
-clockFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 128)
+clockFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 160)
 
 tmpImageName = "/tmp/pictureframe.png"
 totalWidth = 800
