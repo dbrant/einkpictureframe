@@ -21,8 +21,6 @@ logging.basicConfig(level=logging.DEBUG)
 selfPath = os.path.dirname(os.path.realpath(__file__))
 imagepath = os.path.join(selfPath, 'images')
 
-imageList = [f for f in listdir(imagepath) if isfile(join(imagepath, f))]
-
 clockFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 160)
 
 tmpImageName = "/tmp/pictureframe.png"
@@ -50,6 +48,7 @@ try:
 
         logging.info("Creating next image...")
 
+        imageList = [f for f in listdir(imagepath) if isfile(join(imagepath, f))]
         img = Image.open(os.path.join(imagepath, random.choice(imageList)))
         draw = ImageDraw.Draw(img)
 
@@ -73,6 +72,6 @@ try:
         if phase > 3:
             phase = 0
 
-except KeyboardInterrupt:    
+except KeyboardInterrupt:
     logging.info("ctrl-c")
     exit()
