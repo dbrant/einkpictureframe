@@ -35,6 +35,8 @@ from . import epdconfig
 EPD_WIDTH       = 600
 EPD_HEIGHT      = 448
 
+logger = logging.getLogger(__name__)
+
 class EPD:
     def __init__(self):
         self.reset_pin = epdconfig.RST_PIN
@@ -49,7 +51,7 @@ class EPD:
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200) 
         epdconfig.digital_write(self.reset_pin, 0)
-        epdconfig.delay_ms(10)
+        epdconfig.delay_ms(2)
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200)   
 
@@ -66,10 +68,10 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 1)
         
     def ReadBusy(self):
-        logging.debug("e-Paper busy")
+        logger.debug("e-Paper busy")
         while(epdconfig.digital_read(self.busy_pin) == 0):      # 0: idle, 1: busy
             epdconfig.delay_ms(100)    
-        logging.debug("e-Paper busy release")
+        logger.debug("e-Paper busy release")
         
     def init(self):
         if (epdconfig.module_init() != 0):
@@ -125,7 +127,7 @@ class EPD:
         image_monocolor = image.convert('1')
         imwidth, imheight = image_monocolor.size
         pixels = image_monocolor.load()
-        logging.debug('imwidth = %d  imheight =  %d ',imwidth, imheight)
+        logger.debug('imwidth = %d  imheight =  %d ',imwidth, imheight)
         if(imwidth == self.width and imheight == self.height):
             for y in range(imheight):
                 for x in range(imwidth):
@@ -194,8 +196,8 @@ class EPD:
         self.send_command(0x07) # DEEP_SLEEP
         self.send_data(0XA5)
         
-    def Dev_exit(self):
-        epdconfig.module_exit()     
+        epdconfig.delay_ms(2000)
+        epdconfig.module_exit()
         
 ### END OF FILE ###
 

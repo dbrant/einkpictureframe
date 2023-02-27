@@ -34,6 +34,8 @@ from . import epdconfig
 EPD_WIDTH       = 200
 EPD_HEIGHT      = 200
 
+logger = logging.getLogger(__name__)
+
 class EPD:
     def __init__(self):
         self.reset_pin = epdconfig.RST_PIN
@@ -57,7 +59,7 @@ class EPD:
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200) 
         epdconfig.digital_write(self.reset_pin, 0) # module reset
-        epdconfig.delay_ms(10)
+        epdconfig.delay_ms(5)
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200)   
 
@@ -74,10 +76,10 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 1)
         
     def ReadBusy(self):
-        logging.debug("e-Paper busy")
+        logger.debug("e-Paper busy")
         while(epdconfig.digital_read(self.busy_pin) == 0):
             epdconfig.delay_ms(100)    
-        logging.debug("e-Paper busy release")
+        logger.debug("e-Paper busy release")
       
     def set_lut_bw(self):
         self.send_command(0x20) # vcom
@@ -213,7 +215,7 @@ class EPD:
         
         self.send_command(0x02) # power off
         
-    def Dev_exit(self):
+        epdconfig.delay_ms(2000)
         epdconfig.module_exit()
 
 ### END OF FILE ###

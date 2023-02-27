@@ -4,8 +4,8 @@
 # * | Function    :   Electronic paper driver
 # * | Info        :
 # *----------------
-# * | This version:   V1.0
-# * | Date        :   2020-07-04
+# * | This version:   V1.1
+# * | Date        :   2022-08-10
 # # | Info        :   python demo
 # -----------------------------------------------------------------------------
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -34,6 +34,8 @@ from . import epdconfig
 # Display resolution
 EPD_WIDTH       = 648
 EPD_HEIGHT      = 480
+
+logger = logging.getLogger(__name__)
 
 class EPD:
     def __init__(self):
@@ -64,14 +66,21 @@ class EPD:
         epdconfig.digital_write(self.cs_pin, 0)
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
+
+    # send a lot of data   
+    def send_data2(self, data):
+        epdconfig.digital_write(self.dc_pin, 1)
+        epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.spi_writebyte2(data)
+        epdconfig.digital_write(self.cs_pin, 1)
         
     def ReadBusy(self):
-        logging.debug("e-Paper busy")
+        logger.debug("e-Paper busy")
         self.send_command(0X71)
         while(epdconfig.digital_read(self.busy_pin) == 0):      #  0: idle, 1: busy
             self.send_command(0X71)
             epdconfig.delay_ms(200)
-        logging.debug("e-Paper busy release")
+        logger.debug("e-Paper busy release")
             
     def init(self):
         if (epdconfig.module_init() != 0):
@@ -111,21 +120,21 @@ class EPD:
         return 0
 
     def getbuffer(self, image):
-        # logging.debug("bufsiz = ",int(self.width/8) * self.height)
+        # logger.debug("bufsiz = ",int(self.width/8) * self.height)
         buf = [0xFF] * (int(self.width/8) * self.height)
         image_monocolor = image.convert('1')
         imwidth, imheight = image_monocolor.size
         pixels = image_monocolor.load()
-        # logging.debug("imwidth = %d, imheight = %d",imwidth,imheight)
+        # logger.debug("imwidth = %d, imheight = %d",imwidth,imheight)
         if(imwidth == self.width and imheight == self.height):
-            logging.debug("Vertical")
+            logger.debug("Vertical")
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] == 0:
                         buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
-            logging.debug("Horizontal")
+            logger.debug("Horizontal")
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
@@ -135,14 +144,16 @@ class EPD:
         return buf
 
     def display(self, imageblack, imagered):
+        buf = [0x00] * int(self.width * self.height / 8)
+        for i in range(0, int(self.width * self.height / 8)):
+            buf[i] = ~imagered[i]
+
         if (imageblack != None):
             self.send_command(0X10)
-            for i in range(0, int(self.width * self.height / 8)):
-                self.send_data(imageblack[i])        
+            self.send_data2(imageblack)        
         if (imagered != None):
             self.send_command(0X13)
-            for i in range(0, int(self.width * self.height / 8)):
-                self.send_data(~imagered[i])
+            self.send_data2(buf)
 
         self.send_command(0x12)
         epdconfig.delay_ms(200) 
@@ -150,11 +161,9 @@ class EPD:
 
     def Clear(self):
         self.send_command(0X10)
-        for i in range(0, int(self.width * self.height / 8)):
-            self.send_data(0xff)
+        self.send_data2([0xFF] * int(self.width * self.height / 8))
         self.send_command(0X13)
-        for i in range(0, int(self.width * self.height / 8)):
-            self.send_data(0x00)
+        self.send_data2([0x00] * int(self.width * self.height / 8))
 
         self.send_command(0x12)
         epdconfig.delay_ms(200) 
@@ -166,7 +175,7 @@ class EPD:
         self.send_command(0X07) # deep sleep
         self.send_data(0xA5)
         
-    def Dev_exit(self):
+        epdconfig.delay_ms(2000)
         epdconfig.module_exit()
 ### END OF FILE ###
 

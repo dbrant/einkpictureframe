@@ -23,6 +23,7 @@ try:
     epd.init(0)
     epd.Clear(0xFF, 0)
     
+    font36 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 36)
     font24 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 24)
     font18 = ImageFont.truetype(os.path.join(picdir, 'Font.ttc'), 18)
     
@@ -32,10 +33,11 @@ try:
     draw = ImageDraw.Draw(Himage)
     draw.text((10, 0), 'hello world', font = font24, fill = 0)
     draw.text((10, 20), '3.7inch e-Paper', font = font24, fill = 0)
-    draw.text((10, 100), u'微雪电子', font = font24, fill = epd.GRAY1)
-    draw.text((10, 130), u'微雪电子', font = font24, fill = epd.GRAY2)
-    draw.text((10, 160), u'微雪电子', font = font24, fill = epd.GRAY3)
-    draw.text((10, 190), u'微雪电子', font = font24, fill = epd.GRAY4)
+    draw.rectangle((10, 110, 154, 146), 'black', 'black')
+    draw.text((10, 110), u'微雪电子', font = font36, fill = epd.GRAY1)
+    draw.text((10, 150), u'微雪电子', font = font36, fill = epd.GRAY2)
+    draw.text((10, 190), u'微雪电子', font = font36, fill = epd.GRAY3)
+    draw.text((10, 230), u'微雪电子', font = font36, fill = epd.GRAY4)
     draw.line((20, 50, 70, 100), fill = 0)
     draw.line((70, 50, 20, 100), fill = 0)
     draw.rectangle((20, 50, 70, 100), outline = 0)
@@ -48,7 +50,7 @@ try:
     time.sleep(5)
     
     logging.info("2.read 4 Gray bmp file")
-    Himage = Image.open(os.path.join(picdir, '3in7_Scale.bmp'))
+    Himage = Image.open(os.path.join(picdir, '3in7_4gray2.bmp'))
     epd.display_4Gray(epd.getbuffer_4Gray(Himage))
     time.sleep(5)
     
@@ -65,11 +67,11 @@ try:
     draw = ImageDraw.Draw(Limage)
     draw.text((2, 0), 'hello world', font = font18, fill = 0)
     draw.text((2, 20), '3.7inch epd', font = font18, fill = 0)
-    draw.rectangle((150, 20, 246, 48), 'black', 'black')
-    draw.text((150, 20), u'微雪电子', font = font24, fill = epd.GRAY1)
-    draw.text((150, 50), u'微雪电子', font = font24, fill = epd.GRAY2)
-    draw.text((150, 80), u'微雪电子', font = font24, fill = epd.GRAY3)
-    draw.text((150, 110), u'微雪电子', font = font24, fill = epd.GRAY4)
+    draw.rectangle((130, 20, 274, 56), 'black', 'black')
+    draw.text((130, 20), u'微雪电子', font = font36, fill = epd.GRAY1)
+    draw.text((130, 60), u'微雪电子', font = font36, fill = epd.GRAY2)
+    draw.text((130, 100), u'微雪电子', font = font36, fill = epd.GRAY3)
+    draw.text((130, 140), u'微雪电子', font = font36, fill = epd.GRAY4)
     draw.line((10, 90, 60, 140), fill = 0)
     draw.line((60, 90, 10, 140), fill = 0)
     draw.rectangle((10, 90, 60, 140), outline = 0)
@@ -94,7 +96,7 @@ try:
         epd.display_1Gray(epd.getbuffer(time_image))
         
         num = num + 1
-        if(num == 10):
+        if(num == 20):
             break
             
     logging.info("Clear...")
@@ -103,7 +105,6 @@ try:
     
     logging.info("Goto Sleep...")
     epd.sleep()
-    epd.Dev_exit()
     
 except IOError as e:
     logging.info(e)

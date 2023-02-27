@@ -55,7 +55,6 @@ try:
     LRYimage = Image.new('1', (epd.width, epd.height), 255)  # 126*298
     drawblack = ImageDraw.Draw(LBlackimage)
     drawry = ImageDraw.Draw(LRYimage)
-    
     drawblack.text((2, 0), 'hello world', font = font18, fill = 0)
     drawblack.text((2, 20), '2.13 epd b', font = font18, fill = 0)
     drawblack.text((20, 50), u'微雪电子', font = font18, fill = 0)
@@ -78,7 +77,7 @@ try:
     blackimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126
     redimage1 = Image.new('1', (epd.height, epd.width), 255)  # 298*126    
     newimage = Image.open(os.path.join(picdir, '100x100.bmp'))
-    blackimage1.paste(newimage, (0,0))    
+    blackimage1.paste(newimage, (0,0))
     epd.display(epd.getbuffer(blackimage1), epd.getbuffer(redimage1))
     
     logging.info("Clear...")
@@ -87,7 +86,6 @@ try:
     
     logging.info("Goto Sleep...")
     epd.sleep()
-    epd.Dev_exit()
         
 except IOError as e:
     logging.info(e)

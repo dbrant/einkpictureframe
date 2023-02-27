@@ -4,8 +4,8 @@
 # * | Function    :   Electronic paper driver
 # * | Info        :
 # *----------------
-# * | This version:   V1.0
-# * | Date        :   2020-07-22
+# * | This version:   V1.1
+# * | Date        :   2022-08-9
 # # | Info        :   python demo
 # -----------------------------------------------------------------------------
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -33,6 +33,8 @@ from . import epdconfig
 # Display resolution
 EPD_WIDTH       = 152
 EPD_HEIGHT      = 296
+
+logger = logging.getLogger(__name__)
 
 class EPD:
     def __init__(self):
@@ -68,7 +70,7 @@ class EPD:
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200) 
         epdconfig.digital_write(self.reset_pin, 0)
-        epdconfig.delay_ms(10)
+        epdconfig.delay_ms(2)
         epdconfig.digital_write(self.reset_pin, 1)
         epdconfig.delay_ms(200)   
 
@@ -86,12 +88,19 @@ class EPD:
         epdconfig.spi_writebyte([data])
         epdconfig.digital_write(self.cs_pin, 1)
 
+    # send a lot of data   
+    def send_data2(self, data):
+        epdconfig.digital_write(self.dc_pin, 1)
+        epdconfig.digital_write(self.cs_pin, 0)
+        epdconfig.spi_writebyte2(data)
+        epdconfig.digital_write(self.cs_pin, 1)
+
 
     def ReadBusy(self):
-        logging.debug("e-Paper busy")
+        logger.debug("e-Paper busy")
         while(epdconfig.digital_read(self.busy_pin) == 1):      #  0: idle, 1: busy
             epdconfig.delay_ms(200) 
-        logging.debug("e-Paper busy release") 
+        logger.debug("e-Paper busy release") 
 
 
     def init(self, mode):
@@ -143,37 +152,37 @@ class EPD:
             self.ReadBusy()
 
         else:
-            logging.debug("There is no such mode") 
+            logger.debug("There is no such mode") 
 
         return 0
 
 
     def load_lut(self, lut):
         self.send_command(0x32)
-        for i in range(0, 153):
-            self.send_data(lut[i])
-
+        # for i in range(0, 153):
+        #     self.send_data(lut[i])
+        self.send_data2(lut)
 
     def turnon_display(self):
         self.send_command(0x20)
         self.ReadBusy()
 
     def getbuffer(self, image):
-        # logging.debug("bufsiz = ",int(self.width/8) * self.height)
+        # logger.debug("bufsiz = ",int(self.width/8) * self.height)
         buf = [0xFF] * (int(self.width/8) * self.height)
         image_monocolor = image.convert('1')
         imwidth, imheight = image_monocolor.size
         pixels = image_monocolor.load()
-        # logging.debug("imwidth = %d, imheight = %d",imwidth,imheight)
+        # logger.debug("imwidth = %d, imheight = %d",imwidth,imheight)
         if(imwidth == self.width and imheight == self.height):
-            logging.debug("Vertical")
+            logger.debug("Vertical")
             for y in range(imheight):
                 for x in range(imwidth):
                     # Set the bits for the column of pixels at the current position.
                     if pixels[x, y] == 0:
                         buf[int((x + y * self.width) / 8)] &= ~(0x80 >> (x % 8))
         elif(imwidth == self.height and imheight == self.width):
-            logging.debug("Horizontal")
+            logger.debug("Horizontal")
             for y in range(imheight):
                 for x in range(imwidth):
                     newx = y
@@ -194,10 +203,7 @@ class EPD:
         self.send_data(0x01)
 
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(image[i + j * int(self.width / 8)])   
-
+        self.send_data2(image)
         self.turnon_display()
         
 
@@ -208,15 +214,18 @@ class EPD:
         self.send_data(0x27)
         self.send_data(0x01)
 
+        if self.width%8 == 0:
+            linewidth = int(self.width/8)
+        else:
+            linewidth = int(self.width/8) + 1
+
+        buf = [0xff] * int(self.height * linewidth)
+
         self.send_command(0x24)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(0xff)   
+        self.send_data2(buf)   
 
         self.send_command(0x26)
-        for j in range(0, self.height):
-            for i in range(0, int(self.width / 8)):
-                self.send_data(0xff) 
+        self.send_data2(buf) 
 
         self.turnon_display()
 
@@ -225,7 +234,7 @@ class EPD:
         self.send_command(0X10) # DEEP_SLEEP_MODE
         self.send_data(0x01)
 
-    def Dev_exit(self):
+        epdconfig.delay_ms(2000)
         epdconfig.module_exit()
 
 ### END OF FILE ###
