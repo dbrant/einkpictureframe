@@ -2,17 +2,12 @@
 # -*- coding:utf-8 -*-
 import sys
 import os
-import importlib.util
-import logging
-from PIL import Image,ImageDraw,ImageFont
-
-_epd_path = os.path.join(os.path.dirname(os.path.realpath(__file__)),
-                         'waveshare', 'python', 'lib', 'waveshare_epd', 'epd7in5_V2.py')
-_spec = importlib.util.spec_from_file_location('epd7in5_V2', _epd_path)
-epd7in5_V2 = importlib.util.module_from_spec(_spec)
-_spec.loader.exec_module(epd7in5_V2)
+libpath = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'waveshare/python/lib')
+if os.path.exists(libpath):
+    sys.path.append(libpath)
 
 import logging
+from waveshare_epd import epd7in5_V2
 from PIL import Image,ImageDraw,ImageFont
 
 logging.basicConfig(level=logging.DEBUG)
