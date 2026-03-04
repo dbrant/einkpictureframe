@@ -24,7 +24,7 @@ selfPath = os.path.dirname(os.path.realpath(__file__))
 imagepath = os.path.join(selfPath, 'images')
 
 clockFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 160)
-tempFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 64)
+temperatureFont = ImageFont.truetype(os.path.join(selfPath, 'agenda.ttf'), 64)
 
 tmpImageName = "/tmp/pictureframe.png"
 totalWidth = 800
@@ -37,6 +37,7 @@ phase = 0
 
 strokeWidth = 10
 strokeColor = (255, 255, 255)
+temperatureStrokeWidth = 4
 
 # --- Weather.gov API configuration ---
 # Lexington, MA (zip 02421)
@@ -108,19 +109,19 @@ try:
         if phase == 0:
             draw.text((24, 0), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
             if tempText:
-                draw.text((24, 160), tempText, font = tempFont, fill = 0, stroke_width = strokeWidth / 2, stroke_fill = strokeColor)
+                draw.text((24, 160), tempText, font = temperatureFont, fill = 0, stroke_width = temperatureStrokeWidth, stroke_fill = strokeColor)
         elif phase == 1:
             draw.text((totalWidth - clockWidth, 0), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
             if tempText:
-                draw.text((totalWidth - clockWidth, 160), tempText, font = tempFont, fill = 0, stroke_width = strokeWidth / 2, stroke_fill = strokeColor)
+                draw.text((totalWidth - clockWidth, 160), tempText, font = temperatureFont, fill = 0, stroke_width = temperatureStrokeWidth, stroke_fill = strokeColor)
         elif phase == 2:
             draw.text((24, totalHeight - clockHeight), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
             if tempText:
-                draw.text((24, totalHeight - clockHeight - 40), tempText, font = tempFont, fill = 0, stroke_width = strokeWidth / 2, stroke_fill = strokeColor)
+                draw.text((24, totalHeight - clockHeight - 40), tempText, font = temperatureFont, fill = 0, stroke_width = temperatureStrokeWidth, stroke_fill = strokeColor)
         elif phase == 3:
             draw.text((totalWidth - clockWidth, totalHeight - clockHeight), clockText, font = clockFont, fill = 0, stroke_width = strokeWidth, stroke_fill = strokeColor)
             if tempText:
-                draw.text((totalWidth - clockWidth, totalHeight - clockHeight - 40), tempText, font = tempFont, fill = 0, stroke_width = strokeWidth / 2, stroke_fill = strokeColor)
+                draw.text((totalWidth - clockWidth, totalHeight - clockHeight - 40), tempText, font = temperatureFont, fill = 0, stroke_width = temperatureStrokeWidth, stroke_fill = strokeColor)
 
         img.save(tmpImageName, "PNG")
         subprocess.call(['python', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
