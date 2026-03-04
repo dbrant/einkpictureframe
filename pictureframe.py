@@ -7,10 +7,10 @@ from os.path import isfile, join
 import logging
 import datetime
 import random
-import subprocess
 import time
 import json
 import urllib.request
+from displayimage import display_image
 from PIL import Image,ImageDraw,ImageFont
 
 # Before running, make sure Pillow is up to date:
@@ -124,7 +124,11 @@ try:
                 draw.text((totalWidth - clockWidth, totalHeight - clockHeight - 40), tempText, font = temperatureFont, fill = 0, stroke_width = temperatureStrokeWidth, stroke_fill = strokeColor)
 
         img.save(tmpImageName, "PNG")
-        subprocess.call(['python', os.path.join(os.path.dirname(os.path.realpath(__file__)), 'displayimage.py'), tmpImageName])
+
+        try:
+            display_image(tmpImageName)
+        except Exception:
+            logging.exception("Failed to display image on e-ink")
 
         phase = phase + 1
         if phase > 3:
